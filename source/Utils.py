@@ -4,7 +4,7 @@ import numpy as np
 import io
 
 CORN_LABELS = ['Blight', 'Common Rust', 'Healthy', 'Gray Leaf Spot']
-SOYBEAN_LABELS = []
+SOYBEAN_LABELS = ['Caterpillar', 'Diabrotica speciosa', 'Healthy']
 
 # Takes an image and returns a result array where index 0 is the class and index 1 is the confidence
 def predict(image, crop):
@@ -35,3 +35,6 @@ def predict(image, crop):
 
     result = [class_label, confidence]
     return result
+
+# image = load_img('images/corn_gls.jpeg')
+# print(predict(image, "corn"))

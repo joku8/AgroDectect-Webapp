@@ -39,7 +39,7 @@ def upload_file():
         print(predict(file, "corn"))
         return 'upload success', 200
     if soybean :
-        print(predict(file, "corn"))
+        print(predict(file, "soybean"))
         return 'upload success', 200
 
     return 'could not recognize crop, select one', 404
