@@ -6,7 +6,7 @@ def output_pubag_research(dict):
     API_ENDPOINT = 'https://api.nal.usda.gov/pubag/rest/search/'
     API_KEY = 'DEMO_KEY'
 
-    query = "?query=" + dict["crop"] + "&api_key=DEMO_KEY"
+    query = "?query=" + dict['crop'] + "&api_key=DEMO_KEY"
 
     API_QUERY = API_ENDPOINT + query
 
