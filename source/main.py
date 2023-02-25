@@ -12,4 +12,4 @@ from investigator import *
 dict = {"crop": "corn",
         "disease/pest": "common_rust"
         }
-output_pubag_research(dict)
+output_scopus_research(dict)
