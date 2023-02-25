@@ -9,5 +9,7 @@ from investigator import *
 # print(predict("images/definetelyNOTcommon_rust.jpeg", "corn"))
 # print(predict("images/healthy_test.jpeg", "corn"))
 
-KEYWORDS = ["corn", "common_rust", "yeild", "treatment"]
-output_research()
+dict = {"crop": "corn",
+        "disease/pest": "common_rust"
+        }
+output_pubag_research(dict)
