@@ -11,8 +11,21 @@ function App() {
   };
 
   const fileUploadHandler = () => {
-    // Implement file upload logic here
-    console.log(selectedFile);
+    const formData = new FormData();
+    formData.append('file', selectedFile);
+  
+    fetch('/upload', {
+      method: 'POST',
+      body: formData
+    })
+      .then(response => {
+        // Handle response from the backend
+        console.log(response);
+      })
+      .catch(error => {
+        // Handle error
+        console.error(error);
+      });
   };
 
   return (
