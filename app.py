@@ -1,7 +1,7 @@
 from flask import Flask, request
 # from flask_react import React
 from flask_cors import CORS
-from Util import *
+from source.Utils import *
 
 app = Flask(__name__)
 CORS(app)
@@ -33,7 +33,7 @@ def upload_file():
     file = request.files['file']
     # file.save('uploads/' + file.filename)
     print(file)
-    # predict(file)
+    print(predict(file, "corn"))
 
     return 'File saved', 200
 

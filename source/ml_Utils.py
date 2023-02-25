@@ -14,6 +14,9 @@ def create_model(crop, val_dir=None):
         target_size=(150, 150),
         batch_size=32,
         class_mode='categorical')
+    
+    classes = list(train_generator.class_indices.keys())
+    num_classes = len(classes)
 
     test_datagen = ImageDataGenerator(rescale=1./255)
     test_generator = test_datagen.flow_from_directory(
@@ -45,7 +48,7 @@ def create_model(crop, val_dir=None):
         tf.keras.layers.MaxPooling2D(2,2),
         tf.keras.layers.Flatten(),
         tf.keras.layers.Dense(512, activation='relu'),
-        tf.keras.layers.Dense(4, activation='softmax') # change the output layer to 4 classes ********
+        tf.keras.layers.Dense(num_classes, activation='softmax') # change the output layer to 4 classes ********
     ])
     model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
@@ -70,3 +73,8 @@ def create_model(crop, val_dir=None):
 
     # Save the model
     model.save('ml_models/model_' + crop + '.h5')
+
+    classes = list(train_generator.class_indices.keys())
+    num_classes = len(classes)
+
+    return classes
