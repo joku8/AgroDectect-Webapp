@@ -1,0 +1,6 @@
+HackIllinois 2023
+
+AgroDetect - Scan, Detect, and Recommend
+
+Claudia Lee
+Joseph Ku
