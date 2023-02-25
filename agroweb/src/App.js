@@ -1,10 +1,23 @@
-import logo from './logo.svg';
+// import logo from './logo.svg';
+import React, { useState, useEffect } from "react";
 import './App.css';
-import React, { useState } from 'react';
+// import React, { useState } from 'react';
 import Banner from './Banner';
 
 function App() {
   const [selectedFile, setSelectedFile] = useState(null);
+
+  useEffect(()=> {
+    fetch('http://127.0.0.1:5000/get',{
+      'method': 'GET'
+    })
+    .then(response => {
+      // Handle response from the backend
+      console.log(response);
+    })
+    .then(response => setSelectedFile(response))
+
+  },[])
 
   const fileSelectedHandler = event => {
     setSelectedFile(event.target.files[0]);
@@ -14,7 +27,7 @@ function App() {
     const formData = new FormData();
     formData.append('file', selectedFile);
   
-    fetch('/upload', {
+    fetch('http://127.0.0.1:5000/upload', {
       method: 'POST',
       body: formData
     })
@@ -27,6 +40,8 @@ function App() {
         console.error(error);
       });
   };
+  
+  
 
   return (
     <div className="App">
