@@ -29,7 +29,7 @@ def output_pubag_research(dict):
 
     return articles
 
-articles = output_pubag_research('crop rotation')
+# articles = output_pubag_research('crop rotation')
 # for article in articles:
 #     print(article['title'])
 #     print(article['author'])

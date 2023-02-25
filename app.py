@@ -1,7 +1,7 @@
 from flask import Flask, request
 # from flask_react import React
 from flask_cors import CORS
-# from source.Utils import *
+from source.Utils import *
 
 app = Flask(__name__)
 CORS(app)
@@ -35,9 +35,14 @@ def upload_file():
     file = request.files['file']
     # file.save('uploads/' + file.filename)
     print(file)
-    # print(predict(file, "corn")) ## CHANGE CORN TO VARIABLE
+    if corn :
+        print(predict(file, "corn"))
+        return 'upload success', 200
+    if soybean :
+        print(predict(file, "corn"))
+        return 'upload success', 200
 
-    return 'File saved', 200
+    return 'could not recognize crop, select one', 404
 
 
 @app.route('/crop', methods=['POST'])
