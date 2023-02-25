@@ -4,13 +4,13 @@ import json
 
 tmpdict = {}
 
-SCOPUS_API_KEY = '703bd47e7ca98e41db2463dd5b4e6bbe'
-SCOPUS_ENDPOINT = 'https://api.elsevier.com/content/search/scopus/'
-
-# http://api.elsevier.com/content/search/scopus?query=[query]
-
 def output_scopus_research(dict):
+    SCOPUS_API_KEY = '703bd47e7ca98e41db2463dd5b4e6bbe'
+    SCOPUS_ENDPOINT = 'https://api.elsevier.com/content/search/scopus/'
+
+    # http://api.elsevier.com/content/search/scopus?query=[query]
     #?query=[query]
+
     tmpdict = dict
     query = "&query=" + tmpdict['crop']
     key = '?apikey='
@@ -22,37 +22,43 @@ def output_scopus_research(dict):
     # print(response.status_code)
     # print(response.text)
 
+    
+
     return "Default", 200
 
+dict = {"crop": "corn",
+        "disease/pest": "common_rust"
+        }
+output_scopus_research(dict)
 
-#Accepts a dictionary containing the keys, "crop" and "disease/pest"
-# def output_pubag_research(dict):
-    # API_ENDPOINT = 'https://api.nal.usda.gov/pubag/rest/search/'
-    # API_KEY = 'DEMO_KEY'
+# Accepts a dictionary containing the keys, "crop" and "disease/pest"
+def output_pubag_research(dict):
+    API_ENDPOINT = 'https://api.nal.usda.gov/pubag/rest/search/'
+    API_KEY = 'DEMO_KEY'
 
-    # tmpdict = dict
-    # query = "?query=" + tmpdict['crop'] + "&api_key=PC3ooOQmdd9uVlHiF0PIL8wLFgFXb5V6kiAH5GEP"
+    tmpdict = dict
+    query = "?query=" + tmpdict['crop'] + "&api_key=PC3ooOQmdd9uVlHiF0PIL8wLFgFXb5V6kiAH5GEP"
 
-    # API_QUERY = API_ENDPOINT + query
+    API_QUERY = API_ENDPOINT + query
 
-    # print(API_QUERY)
+    print(API_QUERY)
 
-    # response = requests.get(API_QUERY)
+    response = requests.get(API_QUERY)
 
-    # print(response.status_code)
-    # print(response.text)
+    print(response.status_code)
+    print(response.text)
 
-    # data = json.loads(response.text)
-    # articles = []
-    # for item in data['items']:
-    #     article = {
-    #         'title': item['title'],
-    #         'author': ', '.join(item['author']),
-    #         'publication': item['pubName'] + ' ' + item['pubDate']
-    #     }
-    #     articles.append(article)
+    data = json.loads(response.text)
+    articles = []
+    for item in data['items']:
+        article = {
+            'title': item['title'],
+            'author': ', '.join(item['author']),
+            'publication': item['pubName'] + ' ' + item['pubDate']
+        }
+        articles.append(article)
 
-    # return articles
+    return articles
 
 # articles = output_pubag_research('crop rotation')
 # for article in articles:
