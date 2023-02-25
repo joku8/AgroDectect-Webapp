@@ -1,11 +1,11 @@
-// import logo from './logo.svg';
 import React, { useState, useEffect } from "react";
 import './App.css';
-// import React, { useState } from 'react';
 import Banner from './Banner';
 
 function App() {
   const [selectedFile, setSelectedFile] = useState(null);
+  const [corn, setCorn] = useState(false);
+  const [soybean, setSoybean] = useState(false);
 
   useEffect(()=> {
     fetch('http://127.0.0.1:5000/get',{
@@ -23,23 +23,49 @@ function App() {
     setSelectedFile(event.target.files[0]);
   };
 
+  const handleCheckboxChange = (event) => {
+    const { name, checked } = event.target;
+    if (name === 'corn' && checked) {
+      setCorn(true);
+      setSoybean(false);
+    } else if (name === 'soybean' && checked) {
+      setCorn(false);
+      setSoybean(true);
+    } else {
+      setCorn(false);
+      setSoybean(false);
+    }
+  };
+
   const fileUploadHandler = () => {
     const formData = new FormData();
     formData.append('file', selectedFile);
-  
+
+    const cropData = {
+      corn: corn,
+      soybean: soybean
+    }
+
     fetch('http://127.0.0.1:5000/upload', {
       method: 'POST',
       body: formData
     })
       .then(response => {
-        // Handle response from the backend
         console.log(response);
       })
       .catch(error => {
-        // Handle error
         console.error(error);
       });
+
+    fetch('http://127.0.0.1:5000/crop', {
+      method: 'POST',
+      body: JSON.stringify(cropData),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
   };
+
   
   
 
@@ -53,6 +79,14 @@ function App() {
       />
       <Sidebar />
       <h1>Upload your crop images</h1>
+      <div>
+          <label htmlFor="corn">Corn</label>
+          <input type="checkbox" id="corn" name="corn" checked={corn} onChange={handleCheckboxChange} />
+        </div>
+        <div>
+          <label htmlFor="soybean">Soybean</label>
+          <input type="checkbox" id="soybean" name="soybean" checked={soybean} onChange={handleCheckboxChange} />
+        </div>
       <input type="file" onChange={fileSelectedHandler} />
       <button className="upload-btn" onClick={fileUploadHandler}>Upload</button>
     </div>

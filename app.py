@@ -6,6 +6,8 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
+corn = False
+soybean = False
 
 @app.route("/")
 def index():
@@ -36,6 +38,19 @@ def upload_file():
     # print(predict(file, "corn")) ## CHANGE CORN TO VARIABLE
 
     return 'File saved', 200
+
+
+@app.route('/crop', methods=['POST'])
+def crop():
+    global corn
+    global soybean
+
+    data = request.get_json()
+    corn = data.get('corn')
+    soybean = data.get('soybean')
+    # print(corn)
+    # print(soybean)
+    return 'Crop data received'
 
 
 if __name__ == "__main__":
