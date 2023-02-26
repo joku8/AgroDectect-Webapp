@@ -10,6 +10,14 @@ import 'leaflet/dist/leaflet.css';
 import { statesData } from './data';
 import './App.css';
 
+import { NotificationContainer, NotificationManager } from 'react-notifications';
+import 'react-notifications-component/dist/theme.css';
+import 'animate.css/animate.min.css';
+
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+// import { useLoc, useLocEffect } from 'react';
+
 const center = [40.63463151377654, -97.89969605983609];
 
 
@@ -19,13 +27,48 @@ function App() {
   const [soybean, setSoybean] = useState(false);
   const [prediction, setPrediction] = useState('');
   const [description, setDescription] = useState('');
+  const [location, setLocation] = useState(null);
+
+  const requestLocationPermission = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setLocation(position.coords);
+          toast.success("Location shared successfully!");
+          
+          const locationData = {
+            "Latitude": location.latitude,
+            "Longitude": location.longitude
+          }
+      
+          fetch('http://127.0.0.1:5000/location', {
+            method: 'POST',
+            body: JSON.stringify(locationData),
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          })
+        },
+        (error) => {
+          // handle error while getting location
+          if (error.code === error.PERMISSION_DENIED) {
+            // display permission request notification
+            toast('Please allow location access to use this feature.', {
+              autoClose: 5000,
+            });
+          }
+        }
+      );
+    } else {
+      // handle geolocation not supported by browser
+    }
+  };
 
   useEffect(()=> {
     fetch('http://127.0.0.1:5000/get',{
       'method': 'GET'
     })
     .then(response => {
-      // Handle response from the backend
       console.log(response);
     })
     .then(response => setSelectedFile(response))
@@ -65,17 +108,13 @@ function App() {
     })
       .then(response => {
         console.log(response);
-        return response.json(); // Parse the response as JSON
+        return response.json(); 
       })
       .then(data => {
         console.log(data); // Verify that the response contains the prediction property
         setPrediction(data.prediction); // Set the prediction state
         setDescription(data.description)
       })
-      // .then(data=> {
-      //   console.log(data); // Verify that the response contains the prediction property
-      //   setDescription(data.description);
-      // })
       .catch(error => {
         console.error(error);    
       });
@@ -108,6 +147,10 @@ function App() {
         </div>
       <input type="file" onChange={fileSelectedHandler} />
       <button className="upload-btn" onClick={fileUploadHandler}>Upload</button>
+      <br />
+      <button onClick={requestLocationPermission}>Share Location</button>
+      <ToastContainer />
+      <br />
       <PredictionDisplay prediction={prediction} description={description} />
       
       <MapContainer
@@ -167,7 +210,6 @@ function App() {
   );
 }
 
-
 function Sidebar() {
   return (
     <aside className="sidebar">
@@ -188,22 +230,11 @@ function PredictionDisplay({ prediction, description }) {
       <p className="prediction-text">{prediction}</p>
       {description && (
         <div className="description-box">
-          {/* <h2 className="description-title">What you can do:</h2> */}
           <p className="description-text">{description}</p>
         </div>
       )}
     </div>
   );
 }
-
-
-// function DescriptionDisplay({prediction}) {
-//   return (
-//     <div className="prediction-box">
-//       <h2 className="prediction-title">what you can do:</h2>
-//       <p className="prediction-text">{prediction}</p>
-//     </div>
-//   );
-// }
 
 export default App;
