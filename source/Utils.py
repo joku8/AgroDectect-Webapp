@@ -2,9 +2,15 @@ import tensorflow as tf
 from tensorflow.keras.preprocessing.image import load_img, img_to_array
 import numpy as np
 import io
+from Levenshtein import distance
 
-CORN_LABELS = ['Blight', 'Common Rust', 'Healthy', 'Gray Leaf Spot']
-SOYBEAN_LABELS = ['Caterpillar', 'Diabrotica speciosa', 'Healthy']
+enumerate 
+
+CORN_LABELS = ['blight', 'commonrust', 'healthy', 'grayleafspot']
+SOYBEAN_LABELS = ['soybeancaterpillar', 'diabroticaspeciosa', 'healthy']
+
+DISPLAY_NAMES = ["Blight", "Common Rust", "Gray Leaf spot", "Defoliation", "Diabrotica"]
+FILENAMES = ["blight.txt", "commonrust.txt", "grayleafspot.txt", "soybeancaterpillar.txt", "diabroticaspeciosa.txt"]
 
 # Takes an image and returns a result array where index 0 is the class and index 1 is the confidence
 def predict(image, crop):
@@ -36,5 +42,25 @@ def predict(image, crop):
     result = [class_label, confidence]
     return result
 
-# image = load_img('images/corn_gls.jpeg')
-# print(predict(image, "corn"))
+def find_closest_match(target_word, word_array):
+    min_distance = np.inf
+    closest_word = ''
+    for word in word_array:
+        curr_distance = distance(target_word, word)
+        if curr_distance < min_distance:
+            min_distance = curr_distance
+            closest_word = word
+    return closest_word
+
+# Gets description to be displayed
+def get_description(prop) :
+    if prop == "healthy" :
+        return ["Healthy", "No problems detected"]
+    locate = 'background/' + find_closest_match(prop, FILENAMES)
+    with open(locate, 'r') as file:
+        description = file.read()
+    display_item = 
+    package = [display_item, description]
+    return package
+
+print(get_description("blight"))

@@ -9,7 +9,7 @@ from investigator import *
 # print(predict("images/definetelyNOTcommon_rust.jpeg", "corn"))
 # print(predict("images/healthy_test.jpeg", "corn"))
 
-dict = {"crop": "corn",
-        "disease/pest": "common_rust"
-        }
-output_scopus_research(dict)
+# dict = {"crop": "corn",
+#         "disease/pest": "common_rust"
+#         }
+# output_scopus_research(dict)

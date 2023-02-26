@@ -5,3 +5,4 @@ tensorflow
 matplotlib
 nodejs
 npm
+python-Levenshtein
