@@ -1,6 +1,6 @@
 # AgroDetect - A Web Application for Detecting and Tracking Crop Disease and Pests
 
-AgroDetect is a web application designed to assist farmers in identifying diseases and pests, and track their spread over time. It allows users to upload images of crop damage, and provides a likely cause of the damage along with a short description of what the predicted cause of damage is. The application can also collect location data from users to help monitor the spread of diseases and pests, and to alert farmers of the prevalence of pests in nearby areas.
+AgroDetect is a web application designed to assist farmers in identifying diseases and pests, and track their spread over time using AL and machine learning. It allows users to upload images of crop damage, and provides a likely cause of the damage along with a short description of what the predicted cause of damage is. The application can also collect location data from users to help monitor the spread of diseases and pests, and to alert farmers of the prevalence of pests in nearby areas.
 
 ## Dependencies
 To deploy the AgroDetect web application, the following dependencies are required:
