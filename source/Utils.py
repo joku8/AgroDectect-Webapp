@@ -40,7 +40,7 @@ def predict(image, crop):
     confidence = probabilities[class_index]
 
     result = [class_label, confidence]
-    return result
+    return str(result)
 
 def find_closest_match(target_word, word_array):
     min_distance = np.inf
@@ -59,8 +59,8 @@ def get_description(prop) :
     locate = 'background/' + find_closest_match(prop, FILENAMES)
     with open(locate, 'r') as file:
         description = file.read()
-    display_item = 
+    display_item = ""
     package = [display_item, description]
     return package
 
-print(get_description("blight"))
+# print(get_description("blight"))

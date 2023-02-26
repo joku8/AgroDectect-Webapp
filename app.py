@@ -38,7 +38,7 @@ def upload_file():
     if corn :
         result = predict(file, "corn")
         print(result)
-        return jsonify({'status': 'success', 'prediction': result}), 200
+        return {'status': 'success', 'prediction': result}, 200
     if soybean :
         result = predict(file, "soybean")
         print(result)
