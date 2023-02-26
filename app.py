@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 # from flask_react import React
 from flask_cors import CORS
 # from source.Utils import *
+import requests
 
 app = Flask(__name__)
 CORS(app)
@@ -84,9 +85,33 @@ def location():
     print(latitude)
     print(longitude)
 
-    dbDict = {"radius": radius,  "latitude": latitude, "longitude": longitude}
+    dbDict = {"radius": radius,  "latitude": latitude, "longitude": longitude, "disease": diseaseName}
 
-    return dbDict, 200
+    import requests
+
+    SERVER_ADDRESS = '127.0.0.1'
+
+    # CREATE A PEST REPORT
+    url = f'http://{SERVER_ADDRESS}:8081/report'
+    params = {
+        'damage_cause': 'termite',
+        'longitude': dbDict['longitude'],
+        'latitude': dbDict['latitude'],
+    }
+    response = requests.post(url, params=params)
+    print(response.json())
+
+    # FETCH PEST REPORTS
+    url = f'http://{SERVER_ADDRESS}:8081/fetch'
+    params = {
+        'radius': dbDict['radius'],
+        'longitude': dbDict['longitude'],
+        'latitude': dbDict['latitude'],
+        'disease': dbDict['disease'],
+    }
+    response = requests.get(url, params=params)
+
+    return response, 200
 
 if __name__ == "__main__":
     app.run(debug=True)
