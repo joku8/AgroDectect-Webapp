@@ -16,10 +16,8 @@ import 'animate.css/animate.min.css';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-// import { useLoc, useLocEffect } from 'react';
 
 const center = [40.63463151377654, -97.89969605983609];
-
 
 function App() {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -28,6 +26,7 @@ function App() {
   const [prediction, setPrediction] = useState('');
   const [description, setDescription] = useState('');
   const [location, setLocation] = useState(null);
+  const [dbCount, setdbCount] = useState(null);
 
   const requestLocationPermission = () => {
     if (navigator.geolocation) {
@@ -35,7 +34,7 @@ function App() {
         (position) => {
           setLocation(position.coords);
           toast.success("Location shared successfully!");
-          
+
           const locationData = {
             "Latitude": location.latitude,
             "Longitude": location.longitude
@@ -48,6 +47,10 @@ function App() {
               'Content-Type': 'application/json'
             }
           })
+            .then(data => {
+              console.log(data); // Verify that the response contains the prediction property
+              setdbCount(data.dbCount); // Set the prediction state
+            })
         },
         (error) => {
           // handle error while getting location
@@ -149,6 +152,7 @@ function App() {
       <button className="upload-btn" onClick={fileUploadHandler}>Upload</button>
       <br />
       <button onClick={requestLocationPermission}>Share Location</button>
+      {/* <p>Count: {dbCount}</p> */}
       <ToastContainer />
       <br />
       <PredictionDisplay prediction={prediction} description={description} />
