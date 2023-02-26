@@ -37,12 +37,13 @@ def upload_file():
     print(file)
     if corn :
         result = predict(file, "corn")
-        print(result)
-        return {'status': 'success', 'prediction': result}, 200
+        get_des = get_description(result[0])
+        # print(result)
+        return {'status': 'success', 'prediction': get_des[0], 'description' : get_des[1]}, 200
     if soybean :
         result = predict(file, "soybean")
         print(result)
-        return jsonify({'status': 'success', 'prediction': result}), 200
+        return {'status': 'success', 'prediction': get_des[0], 'description' : get_des[1]}, 200
 
 
     return 'could not recognize crop, select one', 404

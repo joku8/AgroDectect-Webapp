@@ -14,7 +14,7 @@
 }
 
 .App-header {
-  background-color: #fefae0;
+  background-color: #faedcd;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -83,3 +83,17 @@
   cursor: pointer;
 }
 
+.prediction-box {
+  background-color: #faedcd;
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px solid #d4a373;
+  border-radius: 4px;
+  max-width: 50%;
+  margin: 0 auto;
+}
+
+.prediction-text {
+  font-size: 1.2rem;
+  /* font-weight: bold; */
+}

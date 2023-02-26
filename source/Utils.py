@@ -40,7 +40,7 @@ def predict(image, crop):
     confidence = probabilities[class_index]
 
     result = [class_label, confidence]
-    return str(result)
+    return result
 
 def find_closest_match(target_word, word_array):
     min_distance = np.inf
@@ -56,11 +56,11 @@ def find_closest_match(target_word, word_array):
 def get_description(prop) :
     if prop == "healthy" :
         return ["Healthy", "No problems detected"]
-    locate = 'background/' + prop + ".txt" # ADD source/ to this line
+    locate = 'source/background/' + prop + ".txt" # ADD source/ to this line
     with open(locate, 'r') as file:
         description = file.read()
     display_item = DISPLAY_NAMES[items.index(prop)]
-    package = str([display_item, description])
+    package = [display_item, description]
     return package
 
-print(get_description("grayleafspot"))
+# print(get_description("grayleafspot"))

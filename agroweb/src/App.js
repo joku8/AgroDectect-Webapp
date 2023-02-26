@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from "react";
 import './App.css';
 import Banner from './Banner';
+import { ComposableMap, Geographies, Geography } from 'react-simple-maps';
+
+// import USmap from "./USmap";
 
 function App() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [corn, setCorn] = useState(false);
   const [soybean, setSoybean] = useState(false);
   const [prediction, setPrediction] = useState('');
+  const [description, setDescription] = useState('');
 
   useEffect(()=> {
     fetch('http://127.0.0.1:5000/get',{
@@ -53,8 +57,17 @@ function App() {
     })
       .then(response => {
         console.log(response);
+        return response.json(); // Parse the response as JSON
       })
-      .then(data => setPrediction(data.prediction))
+      .then(data => {
+        console.log(data); // Verify that the response contains the prediction property
+        setPrediction(data.prediction); // Set the prediction state
+        setDescription(data.description)
+      })
+      // .then(data=> {
+      //   console.log(data); // Verify that the response contains the prediction property
+      //   setDescription(data.description);
+      // })
       .catch(error => {
         console.error(error);    
       });
@@ -67,10 +80,7 @@ function App() {
       }
     })
   };
-
   
-  
-
   return (
     <div className="App">
       <Banner 
@@ -79,7 +89,6 @@ function App() {
         title="Welcome to AgroDetect!" 
         subtitle="Detect the problem and find the solution."
       />
-      <Sidebar />
       <h1>Upload your crop images</h1>
       <div>
           <label htmlFor="corn">Corn</label>
@@ -91,7 +100,8 @@ function App() {
         </div>
       <input type="file" onChange={fileSelectedHandler} />
       <button className="upload-btn" onClick={fileUploadHandler}>Upload</button>
-      {prediction && <p>Prediction: {prediction}</p>}
+      <PredictionDisplay prediction={prediction} description={description} />
+      {/* {description && <p>Description: {description}</p>} */}
     </div>
   );
 }
@@ -108,5 +118,30 @@ function Sidebar() {
     </aside>
   );
 }
+
+function PredictionDisplay({ prediction, description }) {
+  return (
+    <div className="prediction-box">
+      <h2 className="prediction-title">Result from scanning:</h2>
+      <p className="prediction-text">{prediction}</p>
+      {description && (
+        <div className="description-box">
+          {/* <h2 className="description-title">What you can do:</h2> */}
+          <p className="description-text">{description}</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+
+// function DescriptionDisplay({prediction}) {
+//   return (
+//     <div className="prediction-box">
+//       <h2 className="prediction-title">what you can do:</h2>
+//       <p className="prediction-text">{prediction}</p>
+//     </div>
+//   );
+// }
 
 export default App;
