@@ -51,7 +51,7 @@ def upload_file():
         result = predict(file, "soybean")
         get_des = get_description(result[0])
         diseaseName = get_des[0]
-        # print(result)
+        print(str(result))
         return {'status': 'success', 'prediction': get_des[0], 'description' : get_des[1]}, 200
 
 

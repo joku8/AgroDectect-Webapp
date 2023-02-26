@@ -78,3 +78,5 @@ def create_model(crop, val_dir=None):
     num_classes = len(classes)
 
     return classes
+
+create_model("corn")

@@ -152,11 +152,11 @@ function App() {
       <button className="upload-btn" onClick={fileUploadHandler}>Upload</button>
       <br />
       <button onClick={requestLocationPermission}>Share Location</button>
-      {/* {count !== null ? ( */}
+      {count !== null ? (
         <p>There are {0} reports of the crop disease in 25 miles. </p>
-      {/* // ) : (
-      //   <p>Loading...</p>
-      // )} */}
+      ) : (
+        <p>Loading...</p>
+      )}
       <ToastContainer />
       <br />
       <PredictionDisplay prediction={prediction} description={description} />
