@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 # from flask_react import React
 from flask_cors import CORS
 from source.Utils import *
@@ -36,11 +36,14 @@ def upload_file():
     # file.save('uploads/' + file.filename)
     print(file)
     if corn :
-        print(predict(file, "corn"))
-        return 'upload success', 200
+        result = predict(file, "corn")
+        print(result)
+        return jsonify({'status': 'success', 'prediction': result}), 200
     if soybean :
-        print(predict(file, "soybean"))
-        return 'upload success', 200
+        result = predict(file, "soybean")
+        print(result)
+        return jsonify({'status': 'success', 'prediction': result}), 200
+
 
     return 'could not recognize crop, select one', 404
 
@@ -56,7 +59,6 @@ def crop():
     # print(corn)
     # print(soybean)
     return 'Crop data received'
-
 
 if __name__ == "__main__":
     app.run(debug=True)

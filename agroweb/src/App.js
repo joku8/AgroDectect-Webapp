@@ -6,6 +6,7 @@ function App() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [corn, setCorn] = useState(false);
   const [soybean, setSoybean] = useState(false);
+  const [prediction, setPrediction] = useState('');
 
   useEffect(()=> {
     fetch('http://127.0.0.1:5000/get',{
@@ -53,8 +54,9 @@ function App() {
       .then(response => {
         console.log(response);
       })
+      .then(data => setPrediction(data.prediction))
       .catch(error => {
-        console.error(error);
+        console.error(error);    
       });
 
     fetch('http://127.0.0.1:5000/crop', {
@@ -89,6 +91,7 @@ function App() {
         </div>
       <input type="file" onChange={fileSelectedHandler} />
       <button className="upload-btn" onClick={fileUploadHandler}>Upload</button>
+      {prediction && <p>Prediction: {prediction}</p>}
     </div>
   );
 }
