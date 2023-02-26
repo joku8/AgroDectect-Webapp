@@ -1,9 +1,13 @@
 import requests
 
-url = 'http://localhost:3000/report'
-data = {'damage_cause': 'pest1', 'longitude': 10, 'latitude': 12}
+url = 'http://127.0.0.1:8081/report'
+data = {'damage_cause': 'pest1', 'longitude': 10.00, 'latitude': 12.00}
 
 response = requests.post(url, data=data)
 
-print(response.status_code)
-print(response.json())
+if response.status_code == 201:
+    print("Pest report created successfully!")
+    print(response.json())
+else:
+    print("Error creating pest report!")
+    print(response.json())
