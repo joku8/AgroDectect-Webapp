@@ -26,7 +26,7 @@ function App() {
   const [prediction, setPrediction] = useState('');
   const [description, setDescription] = useState('');
   const [location, setLocation] = useState(null);
-  const [dbCount, setdbCount] = useState(null);
+  const [count, setdbCount] = useState(null);
 
   const requestLocationPermission = () => {
     if (navigator.geolocation) {
@@ -49,7 +49,7 @@ function App() {
           })
             .then(data => {
               console.log(data); // Verify that the response contains the prediction property
-              setdbCount(data.dbCount); // Set the prediction state
+              setdbCount(data.count); // Set the prediction state
             })
         },
         (error) => {
@@ -152,7 +152,11 @@ function App() {
       <button className="upload-btn" onClick={fileUploadHandler}>Upload</button>
       <br />
       <button onClick={requestLocationPermission}>Share Location</button>
-      {/* <p>Count: {dbCount}</p> */}
+      {/* {count !== null ? ( */}
+        <p>There are {0} reports of the crop disease in 25 miles. </p>
+      {/* // ) : (
+      //   <p>Loading...</p>
+      // )} */}
       <ToastContainer />
       <br />
       <PredictionDisplay prediction={prediction} description={description} />

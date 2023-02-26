@@ -1,0 +1,4 @@
+npm install react-notifications
+npm install react-notifications-component
+npm install animate.css
+npm install react-toastify
