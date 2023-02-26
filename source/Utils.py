@@ -9,8 +9,8 @@ enumerate
 CORN_LABELS = ['blight', 'commonrust', 'healthy', 'grayleafspot']
 SOYBEAN_LABELS = ['soybeancaterpillar', 'diabroticaspeciosa', 'healthy']
 
-DISPLAY_NAMES = ["Blight", "Common Rust", "Gray Leaf spot", "Defoliation", "Diabrotica"]
-FILENAMES = ["blight.txt", "commonrust.txt", "grayleafspot.txt", "soybeancaterpillar.txt", "diabroticaspeciosa.txt"]
+DISPLAY_NAMES = ["Blight", "Common Rust", "Gray Leaf Spot", "Soybean Caterpillar", "Diabrotica speciosa"]
+items = ["blight", "commonrust", "grayleafspot", "soybeancaterpillar", "diabroticaspeciosa"]
 
 # Takes an image and returns a result array where index 0 is the class and index 1 is the confidence
 def predict(image, crop):
@@ -56,11 +56,11 @@ def find_closest_match(target_word, word_array):
 def get_description(prop) :
     if prop == "healthy" :
         return ["Healthy", "No problems detected"]
-    locate = 'background/' + find_closest_match(prop, FILENAMES)
+    locate = 'background/' + prop + ".txt" # ADD source/ to this line
     with open(locate, 'r') as file:
         description = file.read()
-    display_item = ""
-    package = [display_item, description]
+    display_item = DISPLAY_NAMES[items.index(prop)]
+    package = str([display_item, description])
     return package
 
-# print(get_description("blight"))
+print(get_description("grayleafspot"))

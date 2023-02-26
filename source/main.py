@@ -1,15 +1,19 @@
-# from Utils import *
-# from ml_Utils import *
-from investigator import *
+import numpy as np
+import io
 
-# create_model("corn")
-# create_model("soybean")
+DISPLAY_NAMES = ["Blight", "Common Rust", "Gray Leaf Spot", "Soybean Caterpillar", "Diabrotica speciosa"]
+items = ["blight", "commonrust", "grayleafspot", "soybeancaterpillar", "diabroticaspeciosa"]
 
-# print(predict("images/corn_blight_test.jpeg", "corn"))
-# print(predict("images/definetelyNOTcommon_rust.jpeg", "corn"))
-# print(predict("images/healthy_test.jpeg", "corn"))
+# Gets description to be displayed
+def get_description(prop) :
+    if prop == "healthy" :
+        return ["Healthy", "No problems detected"]
+    locate = 'background/' + prop + ".txt" # ADD source/ to this line
+    with open(locate, 'r') as file:
+        description = file.read()
+    display_item = DISPLAY_NAMES[items.index(prop)]
+    package = str([display_item, description])
+    return package
 
-# dict = {"crop": "corn",
-#         "disease/pest": "common_rust"
-#         }
-# output_scopus_research(dict)
+print(get_description("grayleafspot"))
+
