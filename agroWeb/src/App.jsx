@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Header from "./components/Header";
 import "./App.css";
 
-import { Box, Grid, Stack } from "@mui/material";
+import { Grid } from "@mui/material";
 import FilePicker from "./components/FilePicker";
 
 function App() {
