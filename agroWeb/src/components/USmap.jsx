@@ -1,7 +1,7 @@
 import React from "react";
 import { Map, TileLayer } from "react-leaflet";
 
-function USMap() {
+const USMap = () => {
   return (
     <Map center={[37.8, -96]} zoom={4} style={{ height: "500px" }}>
       <TileLayer
@@ -10,6 +10,6 @@ function USMap() {
       />
     </Map>
   );
-}
+};
 
 export default USMap;

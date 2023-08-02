@@ -23,7 +23,7 @@ def index():
       }
 
 @app.route("/get", methods=['GET'])
-def Defaultget():
+def default_get():
     # Render the React page
     return {
       'resultStatus': 'GET SUCCESS',
