@@ -89,10 +89,12 @@ def location():
 
     SERVER_ADDRESS = '127.0.0.1'
 
+    print(dbDict)
+
     # CREATE A PEST REPORT
     url = f'http://{SERVER_ADDRESS}:8081/report'
     params = {
-        'damage_cause': 'termite',
+        'damage_cause': diseaseName,
         'longitude': dbDict['longitude'],
         'latitude': dbDict['latitude'],
     }
