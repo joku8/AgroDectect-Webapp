@@ -16,7 +16,7 @@ import WrongLocationIcon from "@mui/icons-material/WrongLocation";
 import AddLocationIcon from "@mui/icons-material/AddLocation";
 import WhereToVoteIcon from "@mui/icons-material/WhereToVote";
 
-import * as API from "../utils/locationAPI";
+import * as locationAPI from "../utils/locationAPI";
 
 const Analyze = ({
   cropSelected,
@@ -37,32 +37,38 @@ const Analyze = ({
     }
   };
 
+  const handleUpload = () => {
+    try {
+      console.log(locationAPI.fetchLocations());
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const [listLocations, setListLications] = useState([]);
 
   useEffect(() => {
-    setListLications(API.fetchLocations());
+    console.log("fetching");
+    const loc = locationAPI.fetchLocations();
+    console.log(loc);
   }, []);
 
   useEffect(() => {
-    console.log("Loctaions from API => ", listLocations);
+    console.log("Locations from API => ", listLocations);
   }, [listLocations]);
 
   const [geolocationSupported, setGeolocationSupported] = useState(true);
   const [locationAdded, setLocationAdded] = useState(false);
-  const handleGetLocation = () => {
+  const handleGetLocation = async () => {
     if (navigator.geolocation) {
-      setLocationAdded(true);
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          const locationData = {
+          const data = {
             long: position.coords.longitude,
             lat: position.coords.latitude,
           };
-          API.createLocation(locationData);
-          setListLications(API.fetchLocations());
-          console.log(locationData);
-          setLocation(locationData);
-          snackbar("success", "Location data shared!");
+          locationAPI.createLocation(data);
+          setListLications(locationAPI.fetchLocations());
         },
         (error) => {
           // Handle geolocation error, if any.
@@ -78,6 +84,19 @@ const Analyze = ({
       setGeolocationSupported(false);
     }
   };
+
+  // useEffect(() => {
+  //   if (location) {
+  //     try {
+  //       locationAPI.createLocation(location);
+  //       setListLications(locationAPI.fetchLocations());
+  //       snackbar("success", "Location data shared!");
+  //     } catch (error) {
+  //       setLocation(null);
+  //       console.error(error);
+  //     }
+  //   }
+  // }, [location, snackbar, setLocation]);
 
   return (
     <Box
@@ -138,6 +157,9 @@ const Analyze = ({
                 sx={{
                   minHeight: "30px",
                   maxHeight: "30px",
+                }}
+                onClick={() => {
+                  handleUpload();
                 }}
               >
                 Upload
