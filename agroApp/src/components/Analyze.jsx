@@ -9,14 +9,16 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
-import { getExistingFileHandle } from "../utils";
+import React, { useEffect, useState } from "react";
+import { getExistingFileHandle } from "../utils/utils";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import WrongLocationIcon from "@mui/icons-material/WrongLocation";
 import AddLocationIcon from "@mui/icons-material/AddLocation";
 import WhereToVoteIcon from "@mui/icons-material/WhereToVote";
 
-const FilePicker = ({
+import * as API from "../utils/locationAPI";
+
+const Analyze = ({
   cropSelected,
   cropSelector,
   file,
@@ -35,6 +37,16 @@ const FilePicker = ({
     }
   };
 
+  const [listLocations, setListLications] = useState([]);
+
+  useEffect(() => {
+    setListLications(API.fetchLocations());
+  }, []);
+
+  useEffect(() => {
+    console.log("Loctaions from API => ", listLocations);
+  }, [listLocations]);
+
   const [geolocationSupported, setGeolocationSupported] = useState(true);
   const [locationAdded, setLocationAdded] = useState(false);
   const handleGetLocation = () => {
@@ -43,9 +55,11 @@ const FilePicker = ({
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const locationData = {
-            lat: position.coords.latitude,
             long: position.coords.longitude,
+            lat: position.coords.latitude,
           };
+          API.createLocation(locationData);
+          setListLications(API.fetchLocations());
           console.log(locationData);
           setLocation(locationData);
           snackbar("success", "Location data shared!");
@@ -98,7 +112,8 @@ const FilePicker = ({
                 onChange={cropSelector}
                 size="small"
                 sx={{
-                  height: "30px",
+                  minHeight: "30px",
+                  maxHeight: "30px",
                 }}
               >
                 <ToggleButton value="Corn">Corn</ToggleButton>
@@ -111,7 +126,8 @@ const FilePicker = ({
                   handleSelectFile();
                 }}
                 sx={{
-                  height: "30px",
+                  minHeight: "30px",
+                  maxHeight: "30px",
                 }}
               >
                 Select File
@@ -120,7 +136,8 @@ const FilePicker = ({
                 size="small"
                 variant="contained"
                 sx={{
-                  height: "30px",
+                  minHeight: "30px",
+                  maxHeight: "30px",
                 }}
               >
                 Upload
@@ -164,7 +181,8 @@ const FilePicker = ({
           item
           xs={12}
           sx={{
-            height: "30px",
+            minHeight: "30px",
+            maxHeight: "30px",
           }}
           display="flex"
           justifyContent="right"
@@ -186,4 +204,4 @@ const FilePicker = ({
   );
 };
 
-export default FilePicker;
+export default Analyze;

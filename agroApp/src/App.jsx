@@ -3,7 +3,7 @@ import Header from "./components/Header";
 import "./App.css";
 
 import { Grid } from "@mui/material";
-import FilePicker from "./components/FilePicker";
+import Analyze from "./components/Analyze";
 import Feedback from "./components/Feedback";
 
 function App() {
@@ -115,7 +115,7 @@ function App() {
           alignItems="center"
           justifyContent="center"
         >
-          <FilePicker
+          <Analyze
             cropSelected={selectedCrop}
             cropSelector={handleChangeCrop}
             file={selectedFileHandle}
