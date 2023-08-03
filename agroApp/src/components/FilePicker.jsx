@@ -2,22 +2,66 @@ import {
   Box,
   Button,
   Grid,
+  IconButton,
   Stack,
   ToggleButton,
   ToggleButtonGroup,
+  Tooltip,
   Typography,
 } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import { getExistingFileHandle } from "../utils";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
+import WrongLocationIcon from "@mui/icons-material/WrongLocation";
+import AddLocationIcon from "@mui/icons-material/AddLocation";
+import WhereToVoteIcon from "@mui/icons-material/WhereToVote";
 
-const FilePicker = ({ cropSelected, cropSelector, file, setFile }) => {
+const FilePicker = ({
+  cropSelected,
+  cropSelector,
+  file,
+  setFile,
+  location,
+  setLocation,
+  snackbar,
+}) => {
   const handleSelectFile = async () => {
     const ret = await getExistingFileHandle();
     if (ret.status === true) {
       setFile(ret.content);
+      snackbar("success", "File Selected ");
     } else {
       setFile(null);
+    }
+  };
+
+  const [geolocationSupported, setGeolocationSupported] = useState(true);
+  const [locationAdded, setLocationAdded] = useState(false);
+  const handleGetLocation = () => {
+    if (navigator.geolocation) {
+      setLocationAdded(true);
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const locationData = {
+            lat: position.coords.latitude,
+            long: position.coords.longitude,
+          };
+          console.log(locationData);
+          setLocation(locationData);
+          snackbar("success", "Location data shared!");
+        },
+        (error) => {
+          // Handle geolocation error, if any.
+          // For example, you could display an error message to the user.
+          console.error("Error getting location:", error.message);
+          setLocationAdded(false);
+        }
+      );
+    } else {
+      // Handle geolocation not supported by the browser.
+      // For example, you could display an error message to the user.
+      snackbar("error", "Geolocation is not supported by your browser");
+      setGeolocationSupported(false);
     }
   };
 
@@ -81,6 +125,38 @@ const FilePicker = ({ cropSelected, cropSelector, file, setFile }) => {
               >
                 Upload
               </Button>
+              {!geolocationSupported ? (
+                <IconButton>
+                  <WrongLocationIcon fontSize="large" />
+                </IconButton>
+              ) : (
+                ""
+              )}
+              {geolocationSupported && !locationAdded ? (
+                <Tooltip
+                  title="Help crowdsource data by adding your location"
+                  placement="top"
+                >
+                  <IconButton
+                    onClick={() => {
+                      handleGetLocation();
+                    }}
+                  >
+                    <AddLocationIcon fontSize="large" />
+                  </IconButton>
+                </Tooltip>
+              ) : (
+                ""
+              )}
+              {geolocationSupported && locationAdded ? (
+                <Tooltip title="Location added!" placement="top">
+                  <IconButton>
+                    <WhereToVoteIcon color="success" fontSize="large" />
+                  </IconButton>
+                </Tooltip>
+              ) : (
+                ""
+              )}
             </Stack>
           </Stack>
         </Grid>

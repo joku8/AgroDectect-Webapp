@@ -4,8 +4,25 @@ import "./App.css";
 
 import { Grid } from "@mui/material";
 import FilePicker from "./components/FilePicker";
+import Feedback from "./components/Feedback";
 
 function App() {
+  // Global Snackbar
+  const [showSnackbar, setShowSnackbar] = useState(false);
+  const [severity, setSeverity] = useState("");
+  const [message, setMessage] = useState("");
+  const [snackbarKey, setSnackbarKey] = useState(0); // To manage the key prop
+
+  const handleSnackbarClose = () => {
+    setShowSnackbar(false);
+  };
+
+  const snackbarMessage = (severity, message) => {
+    setSeverity(severity);
+    setMessage(message);
+    setSnackbarKey((prevKey) => prevKey + 1); // Update the key to trigger Snackbar replacement
+    setShowSnackbar(true);
+  };
   const [selectedCrop, setSelectedCrop] = useState("");
   const handleChangeCrop = (event, newCrop) => {
     if (newCrop === null) {
@@ -16,48 +33,11 @@ function App() {
 
   const [selectedFileHandle, setSelectedFileHandle] = useState(null);
 
+  const [location, setLocation] = useState(null);
+
   // // const [prediction, setPrediction] = useState("");
   // // const [description, setDescription] = useState("");
-  // const [location, setLocation] = useState(null);
   // const [count, setdbCount] = useState(null);
-
-  // const requestLocationPermission = () => {
-  //   if (navigator.geolocation) {
-  //     navigator.geolocation.getCurrentPosition(
-  //       (position) => {
-  //         setLocation(position.coords);
-  //         // toast.success("Location shared successfully!");
-
-  //         const locationData = {
-  //           Latitude: location.latitude,
-  //           Longitude: location.longitude,
-  //         };
-
-  //         fetch("http://127.0.0.1:5000/location", {
-  //           method: "POST",
-  //           body: JSON.stringify(locationData),
-  //           headers: {
-  //             "Content-Type": "application/json",
-  //           },
-  //         }).then((data) => {
-  //           console.log(data); // Verify that the response contains the prediction property
-  //           setdbCount(data.count); // Set the prediction state
-  //         });
-  //       },
-  //       (error) => {
-  //         // handle error while getting location
-  //         if (error.code === error.PERMISSION_DENIED) {
-  //           // display permission request notification
-  //           // toast("Please allow location access to use this feature.", {
-  //           //   autoClose: 5000,
-  //           // });
-  //         }
-  //       }
-  //     );
-  //   } else {
-  //     // handle geolocation not supported by browser
-  //   }
-  // };
 
   // useEffect(() => {
   //   fetch("http://127.0.0.1:5000/get", {
@@ -71,20 +51,6 @@ function App() {
 
   // const fileSelectedHandler = (event) => {
   //   setSelectedFile(event.target.files[0]);
-  // };
-
-  // const handleCheckboxChange = (event) => {
-  //   const { name, checked } = event.target;
-  //   if (name === "corn" && checked) {
-  //     setCorn(true);
-  //     setSoybean(false);
-  //   } else if (name === "soybean" && checked) {
-  //     setCorn(false);
-  //     setSoybean(true);
-  //   } else {
-  //     setCorn(false);
-  //     setSoybean(false);
-  //   }
   // };
 
   // const fileUploadHandler = () => {
@@ -154,6 +120,9 @@ function App() {
             cropSelector={handleChangeCrop}
             file={selectedFileHandle}
             setFile={setSelectedFileHandle}
+            location={location}
+            setLocation={setLocation}
+            snackbar={snackbarMessage}
           />
         </Grid>
       </Grid>
@@ -169,6 +138,13 @@ function App() {
       ) : (
         <p>Loading...</p>
       )} */}
+      <Feedback
+        feedbackKey={snackbarKey}
+        open={showSnackbar}
+        severity={severity}
+        message={message}
+        handleClose={handleSnackbarClose}
+      />
     </div>
   );
 }
