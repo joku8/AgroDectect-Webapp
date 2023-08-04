@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "./components/Header";
 import "./App.css";
 
@@ -6,6 +6,7 @@ import { Grid } from "@mui/material";
 import Analyze from "./components/Analyze";
 import USmap from "./components/USmap";
 import Feedback from "./components/Feedback";
+import * as locationAPI from "./utils/locationAPI";
 
 import { withAuthenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
@@ -44,6 +45,14 @@ function App({ signOut }) {
 
   /** List of locations retrieved from GraphQL */
   const [listLocations, setListLications] = useState([]);
+
+  useEffect(() => {
+    async function fetchData() {
+      const ret = await locationAPI.fetchLocations();
+      setListLications(ret);
+    }
+    fetchData();
+  }, []);
 
   // // const [prediction, setPrediction] = useState("");
   // // const [description, setDescription] = useState("");
