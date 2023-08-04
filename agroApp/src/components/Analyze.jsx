@@ -10,7 +10,12 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { getExistingFileHandle } from "../utils/utils";
+import {
+  getExistingFileHandle,
+  getLocalStorage,
+  readImageContents,
+  setLocalStorage,
+} from "../utils/utils";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import WrongLocationIcon from "@mui/icons-material/WrongLocation";
 import AddLocationIcon from "@mui/icons-material/AddLocation";
@@ -23,60 +28,124 @@ const Analyze = ({
   cropSelector,
   file,
   setFile,
-  location,
+  // location,
   setLocation,
   snackbar,
 }) => {
+  /** Image to display (preview before upload) */
+  const [displayImage, setDisplayImage] = useState(null);
+
+  /** Handle file selection */
   const handleSelectFile = async () => {
+    /** Reset current file data */
+    setFile(null);
+    setDisplayImage(null);
+    /** Open file picker */
     const ret = await getExistingFileHandle();
     if (ret.status === true) {
+      /** Set file handle to contents */
       setFile(ret.content);
+      try {
+        // Read the image file contents and get the data URL
+        const result = await readImageContents(ret.content);
+        if (result.status === true) {
+          /** Set the display image data */
+          setDisplayImage(result.content);
+        } else {
+          snackbar("error", "Error reading file contents...");
+          console.error("Error reading file contents.");
+        }
+      } catch (error) {
+        snackbar("error", "Error uploading file...");
+        console.error("Error uploading file:", error);
+      }
       snackbar("success", "File Selected ");
     } else {
       setFile(null);
     }
   };
 
-  const handleUpload = () => {
-    try {
-      console.log(locationAPI.fetchLocations());
-    } catch (error) {
-      console.log(error);
+  /** Upload file (send request to ml server) */
+  const handleUpload = async () => {
+    if (!file) {
+      snackbar("warning", "Please select a file");
+      return;
     }
+
+    if (cropSelected === "") {
+      snackbar("warning", "Please select a crop");
+      return;
+    }
+
+    snackbar("info", "Integrate ML server here!");
   };
 
-  const [listLocations, setListLications] = useState([]);
-
+  /** Watch for changes in location and update local location variable from GraphQL */
   useEffect(() => {
-    // console.log("fetching");
-    // const loc = locationAPI.fetchLocations();
-    // console.log(loc);
-  }, []);
+    async function fetchData() {
+      const ret = await locationAPI.fetchLocations();
+      setLocation(ret);
+    }
+    fetchData();
+  }, [setLocation]);
 
-  useEffect(() => {
-    // console.log("Locations from API => ", listLocations);
-  }, [listLocations]);
-
+  // Toggle to false if not supported (encounter error)
   const [geolocationSupported, setGeolocationSupported] = useState(true);
-  const [locationAdded, setLocationAdded] = useState(false);
-  const handleGetLocation = async () => {
+  // Location has been added (state should discourage adding a location again and again)
+  const [locationAdded, setLocationAdded] = useState(
+    getLocalStorage("addedLocation") === null
+      ? false
+      : getLocalStorage("addedLocation")
+  );
+  // Location has been clicked. disable temporarily
+  const [disableAddLocation, setDisableAddLocation] = useState(false);
+
+  /** Sync local storage with location added check variable */
+  useEffect(() => {
+    setLocalStorage("addedLocation", JSON.stringify(locationAdded));
+  }, [locationAdded]);
+
+  /** Get the user's current location and send to GraphQL */
+  const handleGetLocation = () => {
+    /** Temporarily disable button so multiple requests not sent on consecutive clickss */
+    setDisableAddLocation(true);
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
+      // Get the user's current geolocation
+      const getPosition = new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject);
+      });
+
+      getPosition
+        .then((position) => {
+          // Extract latitude and longitude from the geolocation position
           const data = {
             long: position.coords.longitude,
             lat: position.coords.latitude,
           };
-          // locationAPI.createLocation(data);
-          // setListLications(locationAPI.fetchLocations());
-        },
-        (error) => {
-          // Handle geolocation error, if any.
-          // For example, you could display an error message to the user.
+
+          // Create the location
+          return locationAPI.createLocation(data);
+        })
+        .then(() => {
+          // Fetch the updated list of locations
+          return locationAPI.fetchLocations();
+        })
+        .then((ret) => {
+          // Update the state with the new list of locations
+          setLocation(ret);
+
+          // Indicate that the location was successfully added
+          setLocationAdded(true);
+
+          // Send user feedback
+          snackbar("success", "Thanks for adding your location!");
+        })
+        .catch((error) => {
+          // Handle geolocation error or any other error that occurred
+          snackbar("error", "Error getting location...");
           console.error("Error getting location:", error.message);
           setLocationAdded(false);
-        }
-      );
+        });
     } else {
       // Handle geolocation not supported by the browser.
       // For example, you could display an error message to the user.
@@ -84,19 +153,6 @@ const Analyze = ({
       setGeolocationSupported(false);
     }
   };
-
-  // useEffect(() => {
-  //   if (location) {
-  //     try {
-  //       locationAPI.createLocation(location);
-  //       setListLications(locationAPI.fetchLocations());
-  //       snackbar("success", "Location data shared!");
-  //     } catch (error) {
-  //       setLocation(null);
-  //       console.error(error);
-  //     }
-  //   }
-  // }, [location, snackbar, setLocation]);
 
   return (
     <Box
@@ -113,7 +169,7 @@ const Analyze = ({
         alignItems="center"
         justifyContent="center"
         padding="15px 15px 15px 15px"
-        spacing={2}
+        spacing={1}
       >
         <Grid item xs={12}>
           <Stack
@@ -180,6 +236,7 @@ const Analyze = ({
                     onClick={() => {
                       handleGetLocation();
                     }}
+                    disabled={disableAddLocation}
                   >
                     <AddLocationIcon fontSize="large" />
                   </IconButton>
@@ -201,7 +258,42 @@ const Analyze = ({
         </Grid>
         <Grid
           item
-          xs={12}
+          xs={4}
+          sx={{
+            minHeight: "30px",
+            maxHeight: "30px",
+          }}
+          display="flex"
+          justifyContent="left"
+        >
+          <Stack direction="column" spacing={2}>
+            {file !== null ? (
+              <Box display="flex" alignItems="center">
+                <InsertDriveFileIcon />
+                <Typography variant="caption">{file.name}</Typography>
+              </Box>
+            ) : (
+              ""
+            )}
+            {displayImage && (
+              <div style={{ height: "150px", width: "100%" }}>
+                <img
+                  src={displayImage}
+                  alt="crop-upload"
+                  style={{
+                    maxWidth: "100%",
+                    maxHeight: "100%",
+                    width: "auto",
+                    height: "auto",
+                  }}
+                />
+              </div>
+            )}
+          </Stack>
+        </Grid>
+        <Grid
+          item
+          xs={8}
           sx={{
             minHeight: "30px",
             maxHeight: "30px",
@@ -209,16 +301,7 @@ const Analyze = ({
           display="flex"
           justifyContent="right"
         >
-          {file !== null ? (
-            <Box display="flex" alignItems="center">
-              <InsertDriveFileIcon />
-              <Typography variant="caption">{file.name}</Typography>
-            </Box>
-          ) : (
-            ""
-          )}
-        </Grid>
-        <Grid item xs={12}>
+          {" "}
           {/* Hello Next component */}
         </Grid>
       </Grid>

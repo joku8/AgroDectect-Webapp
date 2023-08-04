@@ -1,14 +1,73 @@
+import {
+  Box,
+  Grid,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+} from "@mui/material";
 import React from "react";
-import { Map, TileLayer } from "react-leaflet";
 
-const USMap = () => {
+const USMap = ({ locations }) => {
   return (
-    <Map center={[37.8, -96]} zoom={4} style={{ height: "500px" }}>
-      <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution='Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
-      />
-    </Map>
+    <Box
+      sx={{
+        backgroundColor: "#f0f0f0",
+        borderRadius: "10px",
+      }}
+      width="70%"
+      height="300px"
+    >
+      <Grid
+        container
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        padding="15px 15px 15px 15px"
+        spacing={2}
+      >
+        <Grid item xs={12}>
+          <TableContainer
+            component={Paper}
+            sx={{ height: "270px", overflow: "scroll" }}
+          >
+            <Table stickyHeader size="small">
+              <TableHead>
+                <TableRow>
+                  <TableCell
+                    align="center"
+                    sx={{
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Latitude
+                  </TableCell>
+                  <TableCell
+                    align="center"
+                    sx={{
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Longitude
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {locations.map((coordinate) => (
+                  <TableRow key={coordinate.id}>
+                    <TableCell align="center">{coordinate.lat}</TableCell>
+                    <TableCell align="center">{coordinate.long}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Grid>
+      </Grid>
+    </Box>
   );
 };
 

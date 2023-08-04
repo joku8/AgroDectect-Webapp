@@ -4,6 +4,7 @@ import "./App.css";
 
 import { Grid } from "@mui/material";
 import Analyze from "./components/Analyze";
+import USmap from "./components/USmap";
 import Feedback from "./components/Feedback";
 
 import { withAuthenticator } from "@aws-amplify/ui-react";
@@ -26,7 +27,11 @@ function App({ signOut }) {
     setSnackbarKey((prevKey) => prevKey + 1); // Update the key to trigger Snackbar replacement
     setShowSnackbar(true);
   };
+
+  /** Crop selected (used to decide which ml to run) */
   const [selectedCrop, setSelectedCrop] = useState("");
+
+  /** Handles changing crop selection */
   const handleChangeCrop = (event, newCrop) => {
     if (newCrop === null) {
       return;
@@ -34,62 +39,14 @@ function App({ signOut }) {
     setSelectedCrop(newCrop);
   };
 
+  /** The file handle of the image uploaded */
   const [selectedFileHandle, setSelectedFileHandle] = useState(null);
 
-  const [location, setLocation] = useState(null);
+  /** List of locations retrieved from GraphQL */
+  const [listLocations, setListLications] = useState([]);
 
   // // const [prediction, setPrediction] = useState("");
   // // const [description, setDescription] = useState("");
-  // const [count, setdbCount] = useState(null);
-
-  // useEffect(() => {
-  //   fetch("http://127.0.0.1:5000/get", {
-  //     method: "GET",
-  //   })
-  //     .then((response) => {
-  //       console.log(response);
-  //     })
-  //     .then((response) => setSelectedFile(response));
-  // }, []);
-
-  // const fileSelectedHandler = (event) => {
-  //   setSelectedFile(event.target.files[0]);
-  // };
-
-  // const fileUploadHandler = () => {
-  //   const formData = new FormData();
-  //   formData.append("file", selectedFile);
-
-  //   const cropData = {
-  //     corn: corn,
-  //     soybean: soybean,
-  //   };
-
-  //   fetch("http://127.0.0.1:5000/upload", {
-  //     method: "POST",
-  //     body: formData,
-  //   })
-  //     .then((response) => {
-  //       console.log(response);
-  //       return response.json();
-  //     })
-  //     .then((data) => {
-  //       console.log(data); // Verify that the response contains the prediction property
-  //       // setPrediction(data.prediction); // Set the prediction state
-  //       // setDescription(data.description);
-  //     })
-  //     .catch((error) => {
-  //       console.error(error);
-  //     });
-
-  //   fetch("http://127.0.0.1:5000/crop", {
-  //     method: "POST",
-  //     body: JSON.stringify(cropData),
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //   });
-  // };
 
   return (
     <div>
@@ -109,7 +66,7 @@ function App({ signOut }) {
           alignItems="center"
           justifyContent="center"
         >
-          <Header />
+          <Header logOff={signOut} />
         </Grid>
         <Grid
           item
@@ -123,24 +80,21 @@ function App({ signOut }) {
             cropSelector={handleChangeCrop}
             file={selectedFileHandle}
             setFile={setSelectedFileHandle}
-            location={location}
-            setLocation={setLocation}
+            location={listLocations}
+            setLocation={setListLications}
             snackbar={snackbarMessage}
           />
         </Grid>
+        <Grid
+          item
+          xs={12}
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+        >
+          <USmap locations={listLocations} />
+        </Grid>
       </Grid>
-      {/* <h1>Upload your crop images</h1>
-      <input type="file" onChange={fileSelectedHandler} />
-      <button className="upload-btn" onClick={fileUploadHandler}>
-        Upload
-      </button>
-      <br />
-      <button onClick={requestLocationPermission}>Share Location</button>
-      {count !== null ? (
-        <p>There are {0} reports of the crop disease in 25 miles. </p>
-      ) : (
-        <p>Loading...</p>
-      )} */}
       <Feedback
         feedbackKey={snackbarKey}
         open={showSnackbar}

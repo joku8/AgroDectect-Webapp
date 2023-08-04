@@ -4,20 +4,19 @@ import {
   deleteLocation as deleteLocationMutation,
 } from "../graphql/mutations";
 
-import { API, Auth } from "aws-amplify";
+import { API } from "aws-amplify";
 
 async function fetchLocations() {
   // List all items
-  console.log("auth", Auth.configure());
   const allLocations = await API.graphql({
     query: listLocations,
   });
-  return allLocations;
+  return allLocations.data.listLocations.items;
 }
 
 async function createLocation(data) {
   const newLocation = await API.graphql({
-    query: createLocation,
+    query: createLocationMutation,
     variables: {
       input: {
         long: data.long,
@@ -25,7 +24,7 @@ async function createLocation(data) {
       },
     },
   });
-  fetchLocations();
+  return newLocation;
 }
 
 async function deleteLocation({ locations, id }) {
