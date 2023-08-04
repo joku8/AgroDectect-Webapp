@@ -1,6 +1,6 @@
 projects:
   agrodectectwebapp:
-    schemaPath: agroApp/src/graphql/schema.json
+    schemaPath: amplify/backend/api/agrodectectwebapp/build/schema.graphql
     includes:
       - src/graphql/**/*.js
     excludes:
