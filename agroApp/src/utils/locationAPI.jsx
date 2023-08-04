@@ -27,13 +27,11 @@ async function createLocation(data) {
   return newLocation;
 }
 
-async function deleteLocation({ locations, id }) {
-  const newLocations = locations.filter((location) => location.id !== id);
+async function deleteLocation(id) {
   await API.graphql({
     query: deleteLocationMutation,
     variables: { input: { id } },
   });
-  return newLocations;
 }
 
 export { fetchLocations, createLocation, deleteLocation };

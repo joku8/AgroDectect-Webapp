@@ -12,9 +12,8 @@ import {
 import React, { useEffect, useState } from "react";
 import {
   getExistingFileHandle,
-  getLocalStorage,
+  getLocation,
   readImageContents,
-  setLocalStorage,
 } from "../utils/utils";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import WrongLocationIcon from "@mui/icons-material/WrongLocation";
@@ -35,8 +34,51 @@ const Analyze = ({
   /** Image to display (preview before upload) */
   const [displayImage, setDisplayImage] = useState(null);
 
+  // Toggle to false if not supported (encounter error)
+  const [geolocationSupported, setGeolocationSupported] = useState(true);
+  // Location has been added (state should discourage adding a location again and again)
+  const [locationAdded, setLocationAdded] = useState(false);
+  // Location has been clicked. disable temporarily
+  const [disableAddLocation, setDisableAddLocation] = useState(false);
+
+  useEffect(() => {
+    if (file !== null) {
+      setDisableAddLocation(false);
+    }
+  }, [file]);
+
+  async function fetchData() {
+    const ret = await locationAPI.fetchLocations();
+    setLocation(ret);
+  }
+
+  /** Get the user's current location and send to GraphQL */
+  const handleGetLocation = async () => {
+    if (file === null) {
+      snackbar("warning", "Please upload an image to issue a report...");
+      return;
+    }
+    /** Temporarily disable button so multiple requests not sent on consecutive clickss */
+    setDisableAddLocation(true);
+    const location = await getLocation();
+    if (location.status === 0) {
+      snackbar("success", "Thank you for sharing your location!");
+      locationAPI.createLocation(location.content);
+      fetchData();
+      setDisableAddLocation(false);
+    } else if (location.status === 1) {
+      snackbar("error", location.content);
+      setDisableAddLocation(false);
+    } else if (location.status === 2) {
+      snackbar("error", location.content);
+      setGeolocationSupported(false);
+    }
+  };
+
   /** Handle file selection */
   const handleSelectFile = async () => {
+    /** Reset lication added so user can report another pest/disease */
+    setLocationAdded(false);
     /** Reset current file data */
     setFile(null);
     setDisplayImage(null);
@@ -78,80 +120,6 @@ const Analyze = ({
     }
 
     snackbar("info", "Integrate ML server here!");
-  };
-
-  /** Watch for changes in location and update local location variable from GraphQL */
-  useEffect(() => {
-    async function fetchData() {
-      const ret = await locationAPI.fetchLocations();
-      setLocation(ret);
-    }
-    fetchData();
-  }, [setLocation]);
-
-  // Toggle to false if not supported (encounter error)
-  const [geolocationSupported, setGeolocationSupported] = useState(true);
-  // Location has been added (state should discourage adding a location again and again)
-  const [locationAdded, setLocationAdded] = useState(
-    getLocalStorage("addedLocation") === null
-      ? false
-      : getLocalStorage("addedLocation")
-  );
-  // Location has been clicked. disable temporarily
-  const [disableAddLocation, setDisableAddLocation] = useState(false);
-
-  /** Sync local storage with location added check variable */
-  useEffect(() => {
-    setLocalStorage("addedLocation", JSON.stringify(locationAdded));
-  }, [locationAdded]);
-
-  /** Get the user's current location and send to GraphQL */
-  const handleGetLocation = () => {
-    /** Temporarily disable button so multiple requests not sent on consecutive clickss */
-    setDisableAddLocation(true);
-    if (navigator.geolocation) {
-      // Get the user's current geolocation
-      const getPosition = new Promise((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject);
-      });
-
-      getPosition
-        .then((position) => {
-          // Extract latitude and longitude from the geolocation position
-          const data = {
-            long: position.coords.longitude,
-            lat: position.coords.latitude,
-          };
-
-          // Create the location
-          return locationAPI.createLocation(data);
-        })
-        .then(() => {
-          // Fetch the updated list of locations
-          return locationAPI.fetchLocations();
-        })
-        .then((ret) => {
-          // Update the state with the new list of locations
-          setLocation(ret);
-
-          // Indicate that the location was successfully added
-          setLocationAdded(true);
-
-          // Send user feedback
-          snackbar("success", "Thanks for adding your location!");
-        })
-        .catch((error) => {
-          // Handle geolocation error or any other error that occurred
-          snackbar("error", "Error getting location...");
-          console.error("Error getting location:", error.message);
-          setLocationAdded(false);
-        });
-    } else {
-      // Handle geolocation not supported by the browser.
-      // For example, you could display an error message to the user.
-      snackbar("error", "Geolocation is not supported by your browser");
-      setGeolocationSupported(false);
-    }
   };
 
   return (
@@ -219,6 +187,21 @@ const Analyze = ({
                 }}
               >
                 Upload
+              </Button>
+              <Button
+                size="small"
+                variant="contained"
+                sx={{
+                  minHeight: "30px",
+                  maxHeight: "30px",
+                }}
+                onClick={() => {
+                  setFile(null);
+                  cropSelector("");
+                  setDisplayImage(null);
+                }}
+              >
+                New
               </Button>
               {!geolocationSupported ? (
                 <IconButton>

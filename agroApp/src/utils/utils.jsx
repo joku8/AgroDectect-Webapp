@@ -77,9 +77,44 @@ function setLocalStorage(key, data) {
   }
 }
 
+async function getLocation() {
+  if (navigator.geolocation) {
+    // Get the user's current geolocation
+    const getPosition = new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(resolve, reject);
+    });
+
+    return getPosition
+      .then((position) => {
+        // Extract latitude and longitude from the geolocation position
+        const data = {
+          long: position.coords.longitude,
+          lat: position.coords.latitude,
+        };
+
+        return {
+          status: 0,
+          content: data,
+        };
+      })
+      .catch((error) => {
+        return {
+          status: 1,
+          content: "Error getting location... Perhaps it needs to be enabled?",
+        };
+      });
+  } else {
+    return {
+      status: 2,
+      content: "Geolocation is not supported by your browser",
+    };
+  }
+}
+
 export {
   getExistingFileHandle,
   getLocalStorage,
+  getLocation,
   readImageContents,
   setLocalStorage,
 };

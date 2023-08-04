@@ -92,7 +92,7 @@ function App({ signOut }) {
           alignItems="center"
           justifyContent="center"
         >
-          <USmap locations={listLocations} />
+          <USmap setLocations={setListLications} locations={listLocations} />
         </Grid>
       </Grid>
       <Feedback
