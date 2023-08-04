@@ -4,10 +4,11 @@ import {
   deleteLocation as deleteLocationMutation,
 } from "../graphql/mutations";
 
-import { API } from "aws-amplify";
+import { API, Auth } from "aws-amplify";
 
 async function fetchLocations() {
   // List all items
+  console.log("auth", Auth.configure());
   const allLocations = await API.graphql({
     query: listLocations,
   });

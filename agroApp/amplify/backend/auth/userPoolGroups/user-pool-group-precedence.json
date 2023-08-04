@@ -1,0 +1,10 @@
+[
+  {
+    "groupName": "agrodetect",
+    "precedence": 1
+  },
+  {
+    "groupName": "agrodetectAccess",
+    "precedence": 2
+  }
+]

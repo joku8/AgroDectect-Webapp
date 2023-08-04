@@ -15,6 +15,10 @@ export type AmplifyDependentResourcesAttributes = {
       "UserPoolArn": "string",
       "UserPoolId": "string",
       "UserPoolName": "string"
+    },
+    "userPoolGroups": {
+      "agrodetectAccessGroupRole": "string",
+      "agrodetectGroupRole": "string"
     }
   }
 }

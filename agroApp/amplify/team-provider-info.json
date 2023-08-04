@@ -16,7 +16,8 @@
         "agrodectectwebapp": {}
       },
       "auth": {
-        "agrodectectwebapp8995ac51": {}
+        "agrodectectwebapp8995ac51": {},
+        "userPoolGroups": {}
       }
     }
   }
