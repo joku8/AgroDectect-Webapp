@@ -8,10 +8,11 @@ import { API } from "aws-amplify";
 
 async function fetchLocations() {
   // List all items
-  const allLocations = await API.graphql({
+  const apiData = await API.graphql({
     query: listLocations,
   });
-  return allLocations.data.listLocations.items;
+  const locationsFromAPI = apiData.data.listLocations.items;
+  return locationsFromAPI;
 }
 
 async function createLocation(data) {

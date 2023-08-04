@@ -47,31 +47,38 @@ const Analyze = ({
     }
   }, [file]);
 
-  async function fetchData() {
-    const ret = await locationAPI.fetchLocations();
-    setLocation(ret);
-  }
-
   /** Get the user's current location and send to GraphQL */
-  const handleGetLocation = async () => {
+  const handleGetLocation = async (e) => {
+    e.preventDefault();
     if (file === null) {
       snackbar("warning", "Please upload an image to issue a report...");
       return;
     }
-    /** Temporarily disable button so multiple requests not sent on consecutive clickss */
+    /** Temporarily disable button so multiple requests not sent on consecutive clicks */
     setDisableAddLocation(true);
-    const location = await getLocation();
-    if (location.status === 0) {
-      snackbar("success", "Thank you for sharing your location!");
-      locationAPI.createLocation(location.content);
-      fetchData();
+
+    try {
+      const location = await getLocation();
+      if (location.status === 0) {
+        snackbar("success", "Thank you for sharing your location!");
+
+        // Create the location and then fetch the updated list of locations
+        await locationAPI.createLocation(location.content);
+        const updatedLocations = await locationAPI.fetchLocations();
+        setLocation(updatedLocations);
+        setLocationAdded(true);
+        setDisableAddLocation(false);
+      } else if (location.status === 1) {
+        snackbar("error", location.content);
+      } else if (location.status === 2) {
+        snackbar("error", location.content);
+        setGeolocationSupported(false);
+      }
+    } catch (error) {
+      console.error("Error while creating or fetching locations:", error);
+      snackbar("error", "Something went wrong. Please try again later.");
+    } finally {
       setDisableAddLocation(false);
-    } else if (location.status === 1) {
-      snackbar("error", location.content);
-      setDisableAddLocation(false);
-    } else if (location.status === 2) {
-      snackbar("error", location.content);
-      setGeolocationSupported(false);
     }
   };
 
@@ -190,7 +197,7 @@ const Analyze = ({
               </Button>
               <Button
                 size="small"
-                variant="contained"
+                variant="outlined"
                 sx={{
                   minHeight: "30px",
                   maxHeight: "30px",
@@ -198,6 +205,7 @@ const Analyze = ({
                 onClick={() => {
                   setFile(null);
                   cropSelector("");
+                  setLocationAdded(false);
                   setDisplayImage(null);
                 }}
               >
@@ -216,8 +224,8 @@ const Analyze = ({
                   placement="top"
                 >
                   <IconButton
-                    onClick={() => {
-                      handleGetLocation();
+                    onClick={(e) => {
+                      handleGetLocation(e);
                     }}
                     disabled={disableAddLocation}
                   >

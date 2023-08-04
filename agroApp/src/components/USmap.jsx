@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { GoogleMap, useJsApiLoader, Marker } from "@react-google-maps/api";
 import { Box, Grid } from "@mui/material";
 import * as locationAPI from "../utils/locationAPI";
@@ -29,6 +29,10 @@ function USmap({ setLocations, locations }) {
   const onUnmount = React.useCallback(function callback(map) {
     setMap(null);
   }, []);
+
+  useEffect(() => {
+    console.log(locations);
+  }, [locations]);
 
   return isLoaded ? (
     <Box
