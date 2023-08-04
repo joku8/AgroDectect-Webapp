@@ -37,10 +37,7 @@
     "resourceName": "agrodectectwebapp8995ac51",
     "authSelections": "identityPoolAndUserPool",
     "useDefault": "default",
-    "userPoolGroupList": [
-      "agrodetect",
-      "agrodetectAccess"
-    ],
+    "userPoolGroupList": [],
     "serviceName": "Cognito",
     "usernameCaseSensitive": false,
     "useEnabledMfas": true,
