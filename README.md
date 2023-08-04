@@ -6,5 +6,5 @@ This deep copy was created specifically for refactoring the project to be suitab
 
 ## Contributors
 
-> [Claudia Lee](https://github.com/Ky-Lee-375/) 
+> [Claudia Lee](https://github.com/Ky-Lee-375/) <br/>
 > [Joe Ku](https://github.com/joku8/)
