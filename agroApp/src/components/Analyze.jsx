@@ -48,13 +48,13 @@ const Analyze = ({
   const [listLocations, setListLications] = useState([]);
 
   useEffect(() => {
-    console.log("fetching");
-    const loc = locationAPI.fetchLocations();
-    console.log(loc);
+    // console.log("fetching");
+    // const loc = locationAPI.fetchLocations();
+    // console.log(loc);
   }, []);
 
   useEffect(() => {
-    console.log("Locations from API => ", listLocations);
+    // console.log("Locations from API => ", listLocations);
   }, [listLocations]);
 
   const [geolocationSupported, setGeolocationSupported] = useState(true);
@@ -67,8 +67,8 @@ const Analyze = ({
             long: position.coords.longitude,
             lat: position.coords.latitude,
           };
-          locationAPI.createLocation(data);
-          setListLications(locationAPI.fetchLocations());
+          // locationAPI.createLocation(data);
+          // setListLications(locationAPI.fetchLocations());
         },
         (error) => {
           // Handle geolocation error, if any.

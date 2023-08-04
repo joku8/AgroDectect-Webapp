@@ -6,7 +6,10 @@ import { Grid } from "@mui/material";
 import Analyze from "./components/Analyze";
 import Feedback from "./components/Feedback";
 
-function App() {
+import { withAuthenticator } from "@aws-amplify/ui-react";
+import "@aws-amplify/ui-react/styles.css";
+
+function App({ signOut }) {
   // Global Snackbar
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [severity, setSeverity] = useState("");
@@ -149,4 +152,4 @@ function App() {
   );
 }
 
-export default App;
+export default withAuthenticator(App);
