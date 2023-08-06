@@ -3,120 +3,35 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from source.Utils import *
 import requests
+import base64
+import json
 
 app = Flask(__name__)
 CORS(app)
 
-corn = False
-soybean = False
+@app.route('/upload', methods=['POST', 'OPTIONS'])
+def upload():
+    try:
+        if request.method == 'POST':
+            if 'image' in request.files and 'crop' in request.form:
+                image_file = request.files['image']
+                crop = json.loads(request.form['crop'])['crop']
+                prediction = predict(image_file, crop)
+                print(image_file)
+                print(prediction)
+                description = get_description(prediction[0])
+                return jsonify({
+                    "status": "success",
+                    "prediction": str(prediction[0]),
+                    "description": str(description[1])
+                }), 200
+            else :
+                return jsonify({'status': 'error', 'message': 'Data not found'}), 400
+        return jsonify({'status': 'success', 'message': 'Image uploaded successfully!'}), 200
 
-Latitude = 0
-Longitude = 0 
-diseaseName = ''
-
-@app.route("/")
-def index():
-    # Render the React page
-    return {
-      'resultStatus': 'SUCCESS',
-      'message': "app.py default"
-      }
-
-@app.route("/get", methods=['GET'])
-def default_get():
-    # Render the React page
-    return {
-      'resultStatus': 'GET SUCCESS',
-      'message': "app.py default"
-      }
-
-
-@app.route('/upload', methods=['POST'])
-def upload_file():
-    global diseaseName
-    print("/upload is called")
-    if 'file' not in request.files:
-        return 'No file uploaded', 400
-
-    file = request.files['file']
-    # file.save('uploads/' + file.filename)
-    print(file)
-    if corn :
-        result = predict(file, "corn")
-        get_des = get_description(result[0])
-        # print(result)
-        diseaseName = get_des[0]
-        return {'status': 'success', 'prediction': get_des[0], 'description' : get_des[1]}, 200
-    if soybean :
-        result = predict(file, "soybean")
-        get_des = get_description(result[0])
-        diseaseName = get_des[0]
-        print(str(result))
-        return {'status': 'success', 'prediction': get_des[0], 'description' : get_des[1]}, 200
-
-
-    return 'could not recognize crop, select one', 404
-
-
-@app.route('/crop', methods=['POST'])
-def crop():
-    global corn
-    global soybean
-
-    data = request.get_json()
-    corn = data.get('corn')
-    soybean = data.get('soybean')
-    # print(corn)
-    # print(soybean)
-    return 'Crop data received'
-
-@app.route('/location', methods=['POST'])
-def location():
-    global Latitude 
-    global Longitude 
-    global diseaseName
-
-    data = request.get_json()
-
-    radius = 25
-    latitude = data.get('Latitude')
-    longitude = data.get('Longitude')
-
-    print(latitude)
-    print(longitude)
-
-    dbDict = {"radius": radius,  "latitude": latitude, "longitude": longitude, "disease": diseaseName}
-
-    SERVER_ADDRESS = '127.0.0.1'
-
-    print(dbDict)
-
-    # CREATE A PEST REPORT
-    url = f'http://{SERVER_ADDRESS}:8081/report'
-    params = {
-        'damage_cause': diseaseName,
-        'longitude': dbDict['longitude'],
-        'latitude': dbDict['latitude'],
-    }
-    response = requests.post(url, params=params)
-    print(response.json())
-
-    # FETCH PEST REPORTS
-    url = f'http://{SERVER_ADDRESS}:8081/fetch'
-    params = {
-        'radius': dbDict['radius'],
-        'longitude': dbDict['longitude'],
-        'latitude': dbDict['latitude'],
-        'disease': dbDict['disease'],
-    }
-    # Fetch pest reports...
-    response = requests.get(url, params=params)
-    resp = response.json()
-
-    print(resp)
-
-    # Return pest reports as JSON
-    return jsonify(resp), 200
+    except Exception as e:
+        print(str(e))
+        return jsonify({'status': 'error', 'message': 'An error occurred.'}), 500
 
 if __name__ == "__main__":
     app.run(debug=True)

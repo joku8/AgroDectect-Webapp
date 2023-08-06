@@ -54,9 +54,6 @@ function App({ signOut }) {
     fetchData();
   }, []);
 
-  // // const [prediction, setPrediction] = useState("");
-  // // const [description, setDescription] = useState("");
-
   return (
     <div>
       <Grid

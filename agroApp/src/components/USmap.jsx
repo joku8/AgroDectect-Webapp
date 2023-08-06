@@ -30,10 +30,6 @@ function USmap({ setLocations, locations }) {
     setMap(null);
   }, []);
 
-  useEffect(() => {
-    console.log(locations);
-  }, [locations]);
-
   return isLoaded ? (
     <Box
       sx={{

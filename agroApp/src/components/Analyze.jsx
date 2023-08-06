@@ -22,6 +22,15 @@ import WhereToVoteIcon from "@mui/icons-material/WhereToVote";
 
 import * as locationAPI from "../utils/locationAPI";
 
+const textRepresentation = {
+  blight: "Blight",
+  commonrust: "Common Rust",
+  grayleafspot: "Gray Leaf Spot",
+  healthy: "Healthy",
+  soybeancaterpillar: "Soybean Caterpillar",
+  diabroticaspeciosa: "Diabrotica speciosa",
+};
+
 const Analyze = ({
   cropSelected,
   cropSelector,
@@ -34,12 +43,25 @@ const Analyze = ({
   /** Image to display (preview before upload) */
   const [displayImage, setDisplayImage] = useState(null);
 
+  const [prediction, setPrediction] = useState("");
+  const [description, setDescription] = useState("");
+
   // Toggle to false if not supported (encounter error)
   const [geolocationSupported, setGeolocationSupported] = useState(true);
   // Location has been added (state should discourage adding a location again and again)
   const [locationAdded, setLocationAdded] = useState(false);
   // Location has been clicked. disable temporarily
   const [disableAddLocation, setDisableAddLocation] = useState(false);
+
+  const reset = () => {
+    /** Reset lication added so user can report another pest/disease */
+    setLocationAdded(false);
+    /** Reset current file data */
+    setFile(null);
+    setDisplayImage(null);
+    setPrediction("");
+    setDescription("");
+  };
 
   useEffect(() => {
     if (file !== null) {
@@ -84,11 +106,7 @@ const Analyze = ({
 
   /** Handle file selection */
   const handleSelectFile = async () => {
-    /** Reset lication added so user can report another pest/disease */
-    setLocationAdded(false);
-    /** Reset current file data */
-    setFile(null);
-    setDisplayImage(null);
+    reset();
     /** Open file picker */
     const ret = await getExistingFileHandle();
     if (ret.status === true) {
@@ -114,7 +132,6 @@ const Analyze = ({
     }
   };
 
-  /** Upload file (send request to ml server) */
   const handleUpload = async () => {
     if (!file) {
       snackbar("warning", "Please select a file");
@@ -126,7 +143,33 @@ const Analyze = ({
       return;
     }
 
-    snackbar("info", "Integrate ML server here!");
+    try {
+      // Convert the FileHandle to a Blob
+      const fileToBlob = await file.getFile();
+      const blob = await fileToBlob.arrayBuffer();
+
+      const formData = new FormData();
+      formData.append("image", new Blob([blob]), file.name);
+      formData.append("crop", JSON.stringify({ crop: cropSelected }));
+
+      // Send the data to the Flask server
+      const response = await fetch("http://127.0.0.1:5000/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("Request failed");
+      }
+
+      const result = await response.json();
+      setPrediction(result.prediction);
+      setDescription(result.description);
+      snackbar("success", "Image uploaded successfully!");
+    } catch (error) {
+      console.error("Error:", error);
+      snackbar("error", "An error occurred during upload");
+    }
   };
 
   return (
@@ -166,8 +209,8 @@ const Analyze = ({
                   maxHeight: "30px",
                 }}
               >
-                <ToggleButton value="Corn">Corn</ToggleButton>
-                <ToggleButton value="Soybean">Soybean</ToggleButton>
+                <ToggleButton value="corn">Corn</ToggleButton>
+                <ToggleButton value="soybean">Soybean</ToggleButton>
               </ToggleButtonGroup>
               <Button
                 size="small"
@@ -290,10 +333,14 @@ const Analyze = ({
             maxHeight: "30px",
           }}
           display="flex"
-          justifyContent="right"
+          justifyContent="left"
         >
-          {" "}
-          {/* Hello Next component */}
+          <Stack direction="column" spacing={2}>
+            <Typography variant="subtitle1" fontWeight="bold">
+              {textRepresentation[prediction] || ""}
+            </Typography>
+            <Typography variant="body2">{description || ""}</Typography>
+          </Stack>
         </Grid>
       </Grid>
     </Box>
