@@ -4,6 +4,8 @@ This project was origonally built during HackIllinois 2023 - Origonal repository
 
 This deep copy was created specifically for refactoring the project to be suitable for aws deployment.
 
+![agrodetect-complete](./images/agrodetect-complete.png)
+
 ## Overview
 
 This repository has two main subdirectories the each contain a part of the application
@@ -30,8 +32,9 @@ Currently, the app is deployed to https://main.d24kyd864elxsq.amplifyapp.com/, b
 6. Install the dependencies
 7. Start the flask server
 8. You should be able to interact with the app now!
+
 ## Contributors
 
-> [Claudia Lee](https://github.com/Ky-Lee-375/) 
-<br/> 
+> [Claudia Lee](https://github.com/Ky-Lee-375/)
+> <br/>
 > [Joe Ku](https://github.com/joku8/)
