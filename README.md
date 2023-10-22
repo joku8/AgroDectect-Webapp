@@ -6,6 +6,9 @@ This deep copy was created specifically for refactoring the project to be suitab
 
 ![agrodetect-complete](./images/agrodetect-complete.png)
 
+## 🚧 Plans to Refactor Project 🚧
+Work is currently being done to apply distributed systems principles to make this app suitable to be scaled up in the future. This will involve redesigning the applications archetecture (e.g. backed services, databases, and more). All of these changes should fit within the aws free tier.
+
 ## Overview
 
 This repository has two main subdirectories the each contain a part of the application
@@ -16,7 +19,7 @@ This subdirectory contains the code for the frontend application. In here, you w
 
 ### middleware
 
-This subdirectory contains the code needed to classify the image retrieved in the application from the user. The prediction model was trained using tensorflow, and interacts with the frontend via HTTP requests to a Flask server. This section was built almost entirely form python
+This subdirectory contains the code needed to classify the image retrieved in the application from the user. The prediction model was trained using tensorflow, and interacts with the frontend via HTTP requests to a Flask server. This section was built almost entirely from python
 
 ## Deployment
 
